@@ -26,9 +26,22 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Opciones de formato mejoradas
+# Near the top of your file, update the FORMAT_OPTIONS dictionary
 FORMAT_OPTIONS = {
-    'best': {'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'},
-    '1080p': {'format': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best'},
+    'best': {
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'no_warnings': True,
+        'ignoreerrors': True,
+        'nocheckcertificate': True,
+        'geo_bypass': True,
+    },
+    '1080p': {
+        'format': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best',
+        'no_warnings': True,
+        'ignoreerrors': True,
+        'nocheckcertificate': True,
+        'geo_bypass': True,
+    },
     '720p': {'format': 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best'},
     '480p': {'format': 'bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best'},
     '360p': {'format': 'bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best'},
@@ -107,7 +120,10 @@ def download_video():
                 }],
                 'restrictfilenames': True,
                 'quiet': False,
-                'no_warnings': False
+                'no_warnings': True,
+                'ignoreerrors': True,
+                'nocheckcertificate': True,
+                'geo_bypass': True,
             }
             
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -224,11 +240,15 @@ def get_video_info():
         if 'youtube.com' not in video_url and 'youtu.be' not in video_url:
             return jsonify({'success': False, 'message': 'Not a valid YouTube URL'}), 400
 
-        # Configure yt-dlp to extract only video information
+        # Configure yt-dlp with additional options
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
             'extract_flat': True,
+            'ignoreerrors': True,
+            'nocheckcertificate': True,
+            'geo_bypass': True,
+            'extract_flat': 'in_playlist'
         }
 
         # Get video information
@@ -278,6 +298,9 @@ def get_video_qualities():
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
+            'ignoreerrors': True,
+            'nocheckcertificate': True,
+            'geo_bypass': True,
         }
 
         # Get video formats
