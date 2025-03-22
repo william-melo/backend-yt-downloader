@@ -10,20 +10,20 @@ from pathlib import Path
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)  # Habilitar CORS para todas las rutas
+CORS(app, origins=os.getenv('CORS_ORIGIN', '*'))
 
 # Configuración
 DOWNLOAD_FOLDER = Path('./downloads')
 DOWNLOAD_FOLDER.mkdir(exist_ok=True)
-CLEANUP_INTERVAL = 3600  # Ejecutar limpieza cada hora (en segundos)
-FILE_MAX_AGE = 86400  # Eliminar archivos después de 24 horas (en segundos)
+CLEANUP_INTERVAL = 3600
+FILE_MAX_AGE = 86400
+
+# URL base del servidor
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# URL base del servidor
-BASE_URL = "http://localhost:5000"
 
 # Opciones de formato mejoradas
 FORMAT_OPTIONS = {
