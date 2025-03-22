@@ -241,6 +241,7 @@ def get_video_info():
             return jsonify({'success': False, 'message': 'Not a valid YouTube URL'}), 400
 
         # Configure yt-dlp with additional options
+        # Add these options to your existing ydl_opts in video-info route
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
@@ -248,7 +249,45 @@ def get_video_info():
             'ignoreerrors': True,
             'nocheckcertificate': True,
             'geo_bypass': True,
-            'extract_flat': 'in_playlist'
+            'geo_bypass_country': 'US',  # Try using US as default
+            'geo_bypass_ip_block': True,
+            'extract_flat': 'in_playlist',
+            'no_check_certificate': True,
+            'cookiefile': 'cookies.txt'  # If you want to add cookies later
+        }
+        
+        # Similarly update the FORMAT_OPTIONS for video downloads
+        FORMAT_OPTIONS = {
+            'best': {
+                'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+                'no_warnings': True,
+                'ignoreerrors': True,
+                'nocheckcertificate': True,
+                'geo_bypass': True,
+                'geo_bypass_country': 'US',
+                'geo_bypass_ip_block': True,
+                'no_check_certificate': True,
+            },
+            '1080p': {
+                'format': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best',
+                'no_warnings': True,
+                'ignoreerrors': True,
+                'nocheckcertificate': True,
+                'geo_bypass': True,
+            },
+            '720p': {'format': 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best'},
+            '480p': {'format': 'bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best'},
+            '360p': {'format': 'bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best'},
+            'audio': {
+                'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+                'outtmpl': '%(title)s.%(ext)s',
+                'restrictfilenames': True
+            }
         }
 
         # Get video information
