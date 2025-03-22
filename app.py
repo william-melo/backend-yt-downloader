@@ -255,6 +255,13 @@ def get_video_info():
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             
+            # Check if video info was retrieved successfully
+            if info is None:
+                return jsonify({
+                    'success': False,
+                    'message': 'Video is unavailable or cannot be accessed'
+                }), 404
+
             # Convert duration to readable format
             duration_seconds = info.get('duration', 0)
             hours = duration_seconds // 3600
@@ -294,7 +301,7 @@ def get_video_qualities():
         if 'youtube.com' not in video_url and 'youtu.be' not in video_url:
             return jsonify({'success': False, 'message': 'Not a valid YouTube URL'}), 400
 
-        # Configure yt-dlp to extract only format information
+        # Configure yt-dlp
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
@@ -306,6 +313,14 @@ def get_video_qualities():
         # Get video formats
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
+            
+            # Check if video info was retrieved successfully
+            if info is None:
+                return jsonify({
+                    'success': False,
+                    'message': 'Video is unavailable or cannot be accessed'
+                }), 404
+
             formats = info.get('formats', [])
             
             # Define desired resolutions including 4K
